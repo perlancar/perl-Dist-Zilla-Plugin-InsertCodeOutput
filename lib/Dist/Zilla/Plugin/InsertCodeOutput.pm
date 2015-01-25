@@ -17,6 +17,8 @@ with (
     },
 );
 
+has verbatim => (is => 'rw', default => sub{1});
+
 use namespace::autoclean;
 
 sub munge_files {
@@ -47,7 +49,7 @@ sub _code_output {
         die "eval '$code' failed: $@";
     }
 
-    $merged =~ s/^/ /gm;
+    $merged =~ s/^/ /gm if $self->verbatim;
     $merged;
 }
 
@@ -62,6 +64,7 @@ __PACKAGE__->meta->make_immutable;
 In dist.ini:
 
  [InsertCodeOutput]
+ ;verbatim=1
 
 In your POD:
 
@@ -72,8 +75,10 @@ In your POD:
 
 This module finds C<# CODE: ...> directives in your POD, evals the specified
 Perl code while capturing the output using L<Capture::Tiny>'s C<capture_merged>
-(which means STDOUT and STDERR output are both captured). If eval fails (C<$@>
-is true), build will be aborted.
+(which means STDOUT and STDERR output are both captured), and insert the output
+to your POD as verbatim paragraph (indented with a whitespace), unless when
+C<verbatim> is set to 0 then it is inserted as-is. If eval fails (C<$@> is
+true), build will be aborted.
 
 
 =head1 SEE ALSO
