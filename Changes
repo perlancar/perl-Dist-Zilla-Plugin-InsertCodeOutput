@@ -1,5 +1,3 @@
-Revision history for Dist-Zilla-Plugin-InsertCodeOutput
-
 0.03    2015-05-05 (PERLANCAR)
 
 	- [Incompatible change] Rename option 'verbatim' to 'make_verbatim'
