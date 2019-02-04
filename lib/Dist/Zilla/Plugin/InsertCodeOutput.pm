@@ -31,7 +31,8 @@ sub munge_file {
     my ($self, $file) = @_;
     my $content = $file->content;
     if ($content =~ s{^#\s*CODE:\s*(.*)\s*$}{$self->_code_output($1)."\n"}egm) {
-        $self->log(["inserting output of code '%s' in %s: '%s'", $1, $file->name, $content]);
+        $self->log(["inserting output of code '%s' in %s", $1, $file->name]);
+        $self->log_debug(["output of code: %s", $content]);
         $file->content($content);
     }
 }
