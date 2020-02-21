@@ -1,3 +1,9 @@
+0.042   2020-02-21  Released-By: PERLANCAR; Urgency: medium
+
+	- Like DZP:InsertCodeResult, allow multiline code with #BEGIN_CODE
+	  .. #END_CODE syntax.
+
+
 0.041   2019-02-04  Released-By: PERLANCAR
 
 	- [ux] Log output of code using log_debug() instead of log().
