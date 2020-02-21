@@ -1,6 +1,8 @@
 package Dist::Zilla::Plugin::InsertCodeOutput;
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
 use 5.010001;
@@ -30,9 +32,14 @@ sub munge_files {
 sub munge_file {
     my ($self, $file) = @_;
     my $content = $file->content;
-    if ($content =~ s{^#\s*CODE:\s*(.*)\s*$}{$self->_code_output($1)."\n"}egm) {
-        $self->log(["inserting output of code '%s' in %s", $1, $file->name]);
-        $self->log_debug(["output of code: %s", $content]);
+    if ($content =~ s{
+                         ^\#\s*CODE:\s*(.*)\s*$ |
+                         ^\#\s*BEGIN_CODE\s*\R((?:.|\R)*?)^\#\s*END_CODE\s*(?:\R|\z)
+                 }{
+                     $self->_code_output($1 // $2)."\n"
+                 }egmx) {
+        $self->log(["inserting output of code '%s' in %s", $1 // $2, $file->name]);
+        $self->log_debug(["content of %s after code output insertion: '%s'", $file->name, $content]);
         $file->content($content);
     }
 }
@@ -71,15 +78,25 @@ In your POD:
 
  # CODE: require MyLib; MyLib::gen_stuff("some", "param");
 
+or for multiline code:
+
+ # BEGIN_CODE
+ require MyLib;
+ MyLib::gen_stuff("some", "param");
+ ...
+ # END_CODE
+
 
 =head1 DESCRIPTION
 
-This module finds C<# CODE: ...> directives in your POD, evals the specified
-Perl code while capturing the output using L<Capture::Tiny>'s C<capture_merged>
-(which means STDOUT and STDERR output are both captured), and insert the output
-to your POD as verbatim paragraph (indented with a whitespace), unless when
-C<make_verbatim> is set to 0 then it is inserted as-is. If eval fails (C<$@> is
-true), build will be aborted.
+This module finds C<# CODE: ...> or C<# BEGIN_CODE> and C<# END CODE> directives
+in your POD, evals the specified Perl code while capturing the output using
+L<Capture::Tiny>'s C<capture_merged> (which means STDOUT and STDERR output are
+both captured), and insert the output to your POD as verbatim paragraph
+(indented with a whitespace), unless when C<make_verbatim> is set to 0 then it
+is inserted as-is. If eval fails (C<$@> is true), build will be aborted.
+
+The directives must be at the first column of the line.
 
 
 =head1 SEE ALSO
