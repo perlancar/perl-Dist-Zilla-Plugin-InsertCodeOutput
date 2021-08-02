@@ -2,3 +2,4 @@ Dist-Zilla-Plugin-InsertCodeOutput-*
 .build
 *~
 nytprof*
+.DS_Store
